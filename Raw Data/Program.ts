@@ -1,99 +1,91 @@
-﻿using System;
-using System.Collections.Generic;
-
-public class Engine
-{
-    public int Speed { get; set; }
-    public int Power { get; set; }
+// Define the Engine class
+class Engine {
+    public speed: number;
+    public power: number;
 }
 
-public class Cargo
-{
-    public int Weight { get; set; }
-    public string Type { get; set; }
+// Define the Cargo class
+class Cargo {
+    public weight: number;
+    public type: string;
 }
 
-public class Tire
-{
-    public double Pressure { get; set; }
-    public int Age { get; set; }
+// Define the Tire class
+class Tire {
+    public pressure: number;
+    public age: number;
 }
 
-public class Car
-{
-    public string Model { get; set; }
-    public Engine CarEngine { get; set; }
-    public Cargo CarCargo { get; set; }
-    public List<Tire> CarTires { get; set; }
+// Define the Car class
+class Car {
+    public model: string;
+    public carEngine: Engine;
+    public carCargo: Cargo;
+    public carTires: Tire[];
 
-    public Car(string model, int speed, int power, int weight, string type, List<Tire> tires)
-    {
-        Model = model;
-        CarEngine = new Engine { Speed = speed, Power = power };
-        CarCargo = new Cargo { Weight = weight, Type = type };
-        CarTires = tires;
+    // Constructor for the Car class
+    constructor(model: string, speed: number, power: number, weight: number, type: string, tires: Tire[]) {
+        this.model = model;
+        this.carEngine = { speed, power };
+        this.carCargo = { weight, type };
+        this.carTires = tires;
     }
 
-    public bool IsFragile()
-    {
-        return CarCargo.Type == "fragile" && CarTires.Any(t => t.Pressure < 1);
+    // Method to check if the car is fragile
+    isFragile(): boolean {
+        return this.carCargo.type === "fragile" && this.carTires.some(t => t.pressure < 1);
     }
 
-    public bool IsFlammable()
-    {
-        return CarCargo.Type == "flamable" && CarEngine.Power > 250;
+    // Method to check if the car is flammable
+    isFlammable(): boolean {
+        return this.carCargo.type === "flamable" && this.carEngine.power > 250;
     }
 }
 
-class Program
-{
-    static void Main()
-    {
-        int n = int.Parse(Console.ReadLine());
-        List<Car> cars = new List<Car>();
+// Main program
+function main(): void {
+    // Read the number of cars from the user
+    console.log("Enter the number of cars:");
+    const n: number = parseInt(prompt("") ?? "0");
 
-        for (int i = 0; i < n; i++)
-        {
-            string[] carInfo = Console.ReadLine().Split();
-            string model = carInfo[0];
-            int engineSpeed = int.Parse(carInfo[1]);
-            int enginePower = int.Parse(carInfo[2]);
-            int cargoWeight = int.Parse(carInfo[3]);
-            string cargoType = carInfo[4];
-            List<Tire> tires = new List<Tire>();
+    const cars: Car[] = [];
 
-            for (int j = 5; j < carInfo.Length; j += 2)
-            {
-                double tirePressure = double.Parse(carInfo[j]);
-                int tireAge = int.Parse(carInfo[j + 1]);
-                tires.Add(new Tire { Pressure = tirePressure, Age = tireAge });
-            }
+    // Loop to input car details
+    for (let i = 0; i < n; i++) {
+        console.log(`Enter details for car ${i + 1}:`);
+        const carInfo: string[] = (prompt("") ?? "").split(" ");
 
-            Car car = new Car(model, engineSpeed, enginePower, cargoWeight, cargoType, tires);
-            cars.Add(car);
+        const model: string = carInfo[0];
+        const engineSpeed: number = parseInt(carInfo[1]);
+        const enginePower: number = parseInt(carInfo[2]);
+        const cargoWeight: number = parseInt(carInfo[3]);
+        const cargoType: string = carInfo[4];
+
+        // Extract tire details from the input
+        const tires: Tire[] = [];
+        for (let j = 5; j < carInfo.length; j += 2) {
+            const tirePressure: number = parseFloat(carInfo[j]);
+            const tireAge: number = parseInt(carInfo[j + 1]);
+            tires.push({ pressure: tirePressure, age: tireAge });
         }
 
-        string command = Console.ReadLine();
+        // Create a new Car object and add it to the cars array
+        const car: Car = new Car(model, engineSpeed, enginePower, cargoWeight, cargoType, tires);
+        cars.push(car);
+    }
 
-        if (command == "fragile")
-        {
-            foreach (Car car in cars)
-            {
-                if (car.IsFragile())
-                {
-                    Console.WriteLine(car.Model);
-                }
-            }
-        }
-        else if (command == "flamable")
-        {
-            foreach (Car car in cars)
-            {
-                if (car.IsFlammable())
-                {
-                    Console.WriteLine(car.Model);
-                }
-            }
-        }
+    // Read the command (either "fragile" or "flamable")
+    const command: string = prompt("") ?? "";
+
+    // Output cars based on the command
+    if (command === "fragile") {
+        const fragileCars: Car[] = cars.filter(car => car.isFragile());
+        fragileCars.forEach(car => console.log(car.model));
+    } else if (command === "flamable") {
+        const flammableCars: Car[] = cars.filter(car => car.isFlammable());
+        flammableCars.forEach(car => console.log(car.model));
     }
 }
+
+// Call the main method to start the program
+main();
